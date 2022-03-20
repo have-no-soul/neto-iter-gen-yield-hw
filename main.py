@@ -6,14 +6,30 @@ nested_list = [['a', 'b', 'c'],
                ]
 
 
-def flat_generator(a: list) -> list:
-    return [x for sublist in a for x in sublist]
+class FlatIterator(list):
+    def __iter__(self):
+        self.cursor1 = 0
+        self.cursor2 = -1
+        return self
+
+    def __next__(self):
+        while len(self) != self.cursor1:
+            if type(self[self.cursor1]) is list:
+                while self.cursor2 < len(self[self.cursor1]) - 1:
+                    self.cursor2 += 1
+                    return self[self.cursor1][self.cursor2]
+            self.cursor2 = -1
+            self.cursor1 += 1
+        raise StopIteration
 
 
-for item in flat_generator(nested_list):
-    print(item)
+my_list = FlatIterator(nested_list)
+flat_list = [item for item in my_list]
 
+for i in my_list:
+    print(i)
 print('________')
+print(flat_list)
 
 # Задание №2
 nested_list = [['a', 'b', 'c'],
@@ -21,10 +37,9 @@ nested_list = [['a', 'b', 'c'],
                [1, 2, None],
                ]
 
-def flat_generator(my_list):
-    for sub_list in my_list:
-        for item in sub_list:
-            yield item
+
+def flat_generator(a: list) -> list:
+    return [x for sublist in a for x in sublist]
 
 
 for item in flat_generator(nested_list):
